@@ -811,6 +811,23 @@ var cloudant = require('@cloudant/cloudant')(opts);
 
 Please check [Request][request] for more information on the defaults. They support features like cookie jar, proxies, ssl, etc.
 
+### Enforcing TLS 1.2 Protocols
+
+The TLS protocol is used to encrypt communications across a network to ensure that transmitted data remains private. There are three released versions of TLS: 1.0, 1.1, and 1.2. All HTTPS connections use TLS.
+
+If your server enforces the use of TLS 1.2 then the nodejs-cloudant client will continue to work as expected (assuming you're running a supported version of Node/OpenSSL).
+
+You can pass `secureProtocol: "TLSv1_2_method"` in the request options to enforce TLS 1.2 on all outgoing requests, for example:
+```js
+var db = new Cloudant({
+  account: 'my_account',
+  password: 'secret',
+  requestDefaults: { secureProtocol: 'TLSv1_2_method' }
+}).db.use('animaldb')
+
+db.list({ include_docs: true }, (e, b) => { console.log(b); });
+```
+
 ### Pool size and open sockets
 
 A very important configuration parameter if you have a high traffic website and are using Cloudant is setting up the `pool.size`. By default, the node.js https global agent (client) has a certain size of active connections that can run simultaneously, while others are kept in a queue. Pooling can be disabled by setting the `agent` property in `requestDefaults` to false, or adjust the global pool size using:
